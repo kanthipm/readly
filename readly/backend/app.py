@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 from mistral_pipeline import generate_lesson_from_curriculum
 
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)   
 
 @app.route("/generate", methods=["POST"])
 def generate():
