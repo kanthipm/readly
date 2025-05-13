@@ -1,12 +1,14 @@
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 import torch
+import json
 
-model_name = "tiiuae/falcon-rw-1b"
+
+model_name = "gpt2"  # or "distilgpt2" if you want the lighter one
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
-pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, max_new_tokens=300, temperature=0.5)
+pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, max_new_tokens=300, temperature=0.7)
 
 def basic_prompt(prompt):
     output = pipe(prompt)[0]["generated_text"]
@@ -22,7 +24,7 @@ def extract_objectives(text):
 
     Return as JSON: [{{"unit": "Unit Title", "objectives": ["Objective 1", "Objective 2"]}}]
     """
-    raw = mistral_prompt(prompt)
+    raw = basic_prompt(prompt)
     try:
         return json.loads(raw)
     except:
@@ -34,7 +36,7 @@ def suggest_activities_for_objective(objective):
     Suggest a gamified activity for the learning objective: "{objective}".
     Format as JSON: {{"activity_type": "drag_and_drop", "reason": "why it fits"}}
     """
-    raw = mistral_prompt(prompt)
+    raw = basic_prompt(prompt)
     try:
         return json.loads(raw)
     except:
@@ -56,7 +58,7 @@ def generate_content_and_questions(objective):
       ]
     }}
     """
-    raw = mistral_prompt(prompt)
+    raw = basic_prompt(prompt)
     try:
         return json.loads(raw)
     except:
